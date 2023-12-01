@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
@@ -14,6 +14,7 @@ const App = () => {
   const [newUrl, setUrl] = useState("");
   const [message, setMessage] = useState("");
   const [appliedStyle, setAppliedStyle] = useState({});
+  const [blogVisible, setBlogVisible] = useState(false);
 
   const fetchBlogs = async () => {
     const blogs = await blogService.getAll();
@@ -32,6 +33,8 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
+
+  const blogFormRef = useRef();
 
   const green = {
     color: "green",
@@ -95,9 +98,11 @@ const App = () => {
         `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
       );
       setAppliedStyle(green);
+      blogFormRef.current.toggleVisibility();
       setTimeout(() => {
         setMessage("");
         setAppliedStyle({});
+        setBlogVisible(false);
       }, 3000);
     } catch (error) {
       console.error(error);
@@ -105,18 +110,26 @@ const App = () => {
   };
 
   const blogForm = () => {
+    const hideWhenVisible = { display: blogVisible ? "none" : "" };
+    const showWhenVisible = { display: blogVisible ? "" : "none" };
     return (
       <>
-        <h3>create a new blog</h3>
-        <form onSubmit={addBlog}>
-          title:
-          <input value={newTitle} onChange={handleTitleChange} />
-          author:
-          <input value={newAuthor} onChange={handleAuthorChange} />
-          url:
-          <input value={newUrl} onChange={handleUrlChange} />
-          <button type="submit">create</button>
-        </form>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setBlogVisible(true)}>new blog</button>
+        </div>
+        <div style={showWhenVisible}>
+          <h3>create a new blog</h3>
+          <form onSubmit={addBlog}>
+            title:
+            <input value={newTitle} onChange={handleTitleChange} />
+            author:
+            <input value={newAuthor} onChange={handleAuthorChange} />
+            url:
+            <input value={newUrl} onChange={handleUrlChange} />
+            <button type="submit">create</button>
+          </form>
+          <button onClick={() => setBlogVisible(false)}>cancel</button>
+        </div>
       </>
     );
   };
@@ -124,6 +137,11 @@ const App = () => {
   const handleLogout = () => {
     setUser(null);
     window.localStorage.removeItem("loggedBlogappUser");
+  };
+
+  const handleReset = () => {
+    setPassword("");
+    setUsername("");
   };
 
   const loginForm = () => {
@@ -151,6 +169,9 @@ const App = () => {
             />
           </div>
           <button type="submit">login</button>
+          <button type="reset" onClick={handleReset}>
+            cancel
+          </button>
         </form>
       </>
     );
