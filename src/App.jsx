@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
+import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -9,12 +11,8 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [newAuthor, setAuthor] = useState("");
-  const [newTitle, setTitle] = useState("");
-  const [newUrl, setUrl] = useState("");
   const [message, setMessage] = useState("");
   const [appliedStyle, setAppliedStyle] = useState({});
-  const [blogVisible, setBlogVisible] = useState(false);
 
   const fetchBlogs = async () => {
     const blogs = await blogService.getAll();
@@ -69,69 +67,20 @@ const App = () => {
     }
   };
 
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
+  const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility();
 
-  const handleAuthorChange = (e) => {
-    setAuthor(e.target.value);
-  };
-
-  const handleUrlChange = (e) => {
-    setUrl(e.target.value);
-  };
-
-  const addBlog = async (e) => {
-    e.preventDefault();
-    const blog = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-    };
-    try {
-      const returnedBlog = await blogService.create(blog);
-      setBlogs(blogs.concat(returnedBlog));
-      setAuthor("");
-      setUrl("");
-      setTitle("");
-      setMessage(
-        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
-      );
-      setAppliedStyle(green);
-      blogFormRef.current.toggleVisibility();
-      setTimeout(() => {
-        setMessage("");
-        setAppliedStyle({});
-        setBlogVisible(false);
-      }, 3000);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const blogForm = () => {
-    const hideWhenVisible = { display: blogVisible ? "none" : "" };
-    const showWhenVisible = { display: blogVisible ? "" : "none" };
-    return (
-      <>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setBlogVisible(true)}>new blog</button>
-        </div>
-        <div style={showWhenVisible}>
-          <h3>create a new blog</h3>
-          <form onSubmit={addBlog}>
-            title:
-            <input value={newTitle} onChange={handleTitleChange} />
-            author:
-            <input value={newAuthor} onChange={handleAuthorChange} />
-            url:
-            <input value={newUrl} onChange={handleUrlChange} />
-            <button type="submit">create</button>
-          </form>
-          <button onClick={() => setBlogVisible(false)}>cancel</button>
-        </div>
-      </>
+    const returnedBlog = await blogService.create(blogObject);
+    setBlogs(blogs.concat(returnedBlog));
+    setMessage(
+      `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
     );
+    setAppliedStyle(green);
+
+    setTimeout(() => {
+      setMessage("");
+      setAppliedStyle({});
+    }, 3000);
   };
 
   const handleLogout = () => {
@@ -143,6 +92,12 @@ const App = () => {
     setPassword("");
     setUsername("");
   };
+
+  const blogForm = () => (
+    <Togglable buttonLabel="new note" ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
+    </Togglable>
+  );
 
   const loginForm = () => {
     return (
