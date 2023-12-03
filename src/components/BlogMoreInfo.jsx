@@ -1,14 +1,9 @@
-const BlogMoreInfo = ({ blog }) => {
-  const blogStyle = {
-    display: "flex",
-    flexDirection: "column",
-  };
-
+const BlogMoreInfo = ({ blog, handleLikeBlog }) => {
   return (
     <div>
-      <div style={blogStyle}>
-        {blog.author} {blog.url} {blog.likes} <button>like</button>
-      </div>
+      <p>{blog.author}</p>
+      <p>{blog.url}</p>
+      {blog.likes} <button onClick={handleLikeBlog}>like</button>
     </div>
   );
 };

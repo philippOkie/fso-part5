@@ -15,12 +15,12 @@ const App = () => {
   const [message, setMessage] = useState("");
   const [appliedStyle, setAppliedStyle] = useState({});
 
-  const fetchBlogs = async () => {
-    const blogs = await blogService.getAll();
-    setBlogs(blogs);
-  };
-
   useEffect(() => {
+    const fetchBlogs = async () => {
+      const blogs = await blogService.getAll();
+      setBlogs(blogs);
+    };
+
     fetchBlogs();
   }, []);
 
@@ -36,6 +36,19 @@ const App = () => {
   const blogFormRef = useRef();
   const blogRef = useRef();
 
+  const handleLikeBlog = async (id) => {
+    try {
+      const blog = blogs.find((b) => b.id === id);
+      const changedBlog = { ...blog, likes: blog.likes + 1 };
+
+      const returnedBlog = await blogService.update(id, changedBlog);
+
+      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const green = {
     color: "green",
     border: "green 2px solid",
@@ -44,6 +57,14 @@ const App = () => {
   const red = {
     color: "red",
     border: "red 2px solid",
+  };
+
+  const blogStyle = {
+    border: "solid 1px black",
+    height: "auto",
+    margin: "0.5%",
+    display: "flex",
+    flexDirection: "column",
   };
 
   const handleSubmitLogin = async (e) => {
@@ -87,7 +108,7 @@ const App = () => {
 
   const handleLogout = () => {
     setUser(null);
-    window.localStorage.removeItem("loggedBlogappUser");
+    window.localStorage.clear();
   };
 
   const handleReset = () => {
@@ -134,14 +155,6 @@ const App = () => {
     );
   };
 
-  const blogStyle = {
-    border: "solid 1px black",
-    height: "auto",
-    margin: "0.5%",
-    display: "flex",
-    flexDirection: "column",
-  };
-
   return (
     <div>
       <div>
@@ -158,7 +171,10 @@ const App = () => {
               <div key={blog.id} style={blogStyle}>
                 <Blog blog={blog} />
                 <Togglable buttonLabel="view" ref={blogRef}>
-                  <BlogMoreInfo key={blog.id} blog={blog} />
+                  <BlogMoreInfo
+                    blog={blog}
+                    handleLikeBlog={() => handleLikeBlog(blog.id)}
+                  />
                 </Togglable>
               </div>
             ))}
