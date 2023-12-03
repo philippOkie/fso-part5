@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
+import BlogMoreInfo from "./components/BlogMoreInfo";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
@@ -33,6 +34,7 @@ const App = () => {
   }, []);
 
   const blogFormRef = useRef();
+  const blogRef = useRef();
 
   const green = {
     color: "green",
@@ -94,7 +96,7 @@ const App = () => {
   };
 
   const blogForm = () => (
-    <Togglable buttonLabel="new note" ref={blogFormRef}>
+    <Togglable buttonLabel="new blog" ref={blogFormRef}>
       <BlogForm createBlog={addBlog} />
     </Togglable>
   );
@@ -132,6 +134,14 @@ const App = () => {
     );
   };
 
+  const blogStyle = {
+    border: "solid 1px black",
+    height: "auto",
+    margin: "0.5%",
+    display: "flex",
+    flexDirection: "column",
+  };
+
   return (
     <div>
       <div>
@@ -145,7 +155,12 @@ const App = () => {
             <button onClick={handleLogout}>logout</button>
             {blogForm()}
             {blogs.map((blog) => (
-              <Blog key={blog.id} blog={blog} />
+              <div key={blog.id} style={blogStyle}>
+                <Blog blog={blog} />
+                <Togglable buttonLabel="view" ref={blogRef}>
+                  <BlogMoreInfo key={blog.id} blog={blog} />
+                </Togglable>
+              </div>
             ))}
           </div>
         )}
