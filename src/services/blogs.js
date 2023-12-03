@@ -9,13 +9,13 @@ const setToken = (newToken) => {
 
 const getAll = async () => {
   const response = await axios.get(baseUrl);
-  console.log(response.data);
+  // console.log(response.data);
   return response.data;
 };
 
 const update = async (id, newObject) => {
   const response = await axios.put(`${baseUrl}/${id}`, newObject);
-  console.log(response.data);
+  // console.log(response.data);
   if (response.status === 200) {
     return response.data;
   } else {
