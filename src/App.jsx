@@ -40,19 +40,6 @@ const App = () => {
   const blogFormRef = useRef();
   const blogRef = useRef();
 
-  const handleLikeBlog = async (id) => {
-    try {
-      const blog = blogs.find((b) => b.id === id);
-      const changedBlog = { ...blog, likes: blog.likes + 1 };
-
-      const returnedBlog = await blogService.update(id, changedBlog);
-
-      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const green = {
     color: "green",
     border: "green 2px solid",
@@ -69,6 +56,27 @@ const App = () => {
     margin: "0.5%",
     display: "flex",
     flexDirection: "column",
+  };
+
+  const handleLikeBlog = async (id) => {
+    try {
+      const blog = blogs.find((b) => b.id === id);
+      const changedBlog = { ...blog, likes: blog.likes + 1 };
+
+      const returnedBlog = await blogService.update(id, changedBlog);
+
+      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRemoveBlog = async (id) => {
+    const blog = blogs.find((b) => b.id === id);
+
+    await blogService.remove(id);
+
+    setBlogs(blogs.filter((blog) => blog.id !== id));
   };
 
   const handleSubmitLogin = async (e) => {
@@ -161,30 +169,29 @@ const App = () => {
 
   return (
     <div>
-      <div>
-        {user === null ? (
-          loginForm()
-        ) : (
-          <div>
-            <h2>blogs</h2>
-            <Notification message={message} appliedStyle={appliedStyle} />
-            <p>{user.name} logged in</p>
-            <button onClick={handleLogout}>logout</button>
-            {blogForm()}
-            {blogs.map((blog) => (
-              <div key={blog.id} style={blogStyle}>
-                <Blog blog={blog} />
-                <Togglable buttonLabel="view" ref={blogRef}>
-                  <BlogMoreInfo
-                    blog={blog}
-                    handleLikeBlog={() => handleLikeBlog(blog.id)}
-                  />
-                </Togglable>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {user === null ? (
+        loginForm()
+      ) : (
+        <div>
+          <h2>blogs</h2>
+          <Notification message={message} appliedStyle={appliedStyle} />
+          <p>{user.name} logged in</p>
+          <button onClick={handleLogout}>logout</button>
+          {blogForm()}
+          {blogs.map((blog) => (
+            <div key={blog.id} style={blogStyle}>
+              <Blog blog={blog} />
+              <Togglable buttonLabel="view" ref={blogRef}>
+                <BlogMoreInfo
+                  blog={blog}
+                  handleLikeBlog={() => handleLikeBlog(blog.id)}
+                  handleRemoveBlog={() => handleRemoveBlog(blog.id)}
+                />
+              </Togglable>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
