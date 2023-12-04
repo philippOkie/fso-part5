@@ -74,9 +74,12 @@ const App = () => {
   const handleRemoveBlog = async (id) => {
     const blog = blogs.find((b) => b.id === id);
 
-    await blogService.remove(id);
-
-    setBlogs(blogs.filter((blog) => blog.id !== id));
+    if (window.confirm(`Remove blog, are you sure want to remove it?`)) {
+      await blogService.remove(id);
+      setBlogs(blogs.filter((blog) => blog.id !== id));
+    } else {
+      return;
+    }
   };
 
   const handleSubmitLogin = async (e) => {
