@@ -6,6 +6,7 @@ import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import PropTypes from "prop-types";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -74,7 +75,7 @@ const App = () => {
   const handleRemoveBlog = async (id) => {
     const blog = blogs.find((b) => b.id === id);
 
-    if (window.confirm(`Remove blog, are you sure want to remove it?`)) {
+    if (window.confirm("Remove blog, are you sure want to remove it?")) {
       await blogService.remove(id);
       setBlogs(blogs.filter((blog) => blog.id !== id));
     } else {
@@ -168,6 +169,12 @@ const App = () => {
         </form>
       </>
     );
+  };
+
+  loginForm.propTypes = {
+    handleSubmitLogin: PropTypes.func.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
   };
 
   return (

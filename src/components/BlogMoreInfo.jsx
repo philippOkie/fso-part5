@@ -3,7 +3,7 @@ const BlogMoreInfo = ({ blog, handleLikeBlog, handleRemoveBlog }) => {
     <div>
       <p>{blog.author}</p>
       <p>{blog.url}</p>
-      {blog.likes} <button onClick={handleLikeBlog}>like</button>
+      {`Likes: ${blog.likes}`} <button onClick={handleLikeBlog}>like</button>
       <button onClick={handleRemoveBlog}>remove</button>
     </div>
   );
