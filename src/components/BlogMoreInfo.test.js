@@ -42,6 +42,7 @@ test("ensures that if the like button is clicked twice, the event handler the co
 
   render(
     <BlogMoreInfo
+      user={mockHandler}
       blog={blog}
       handleLikeBlog={mockHandler}
       handleRemoveBlog={mockHandler}

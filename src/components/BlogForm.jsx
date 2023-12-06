@@ -7,14 +7,20 @@ const BlogForm = ({ createBlog }) => {
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
-  };
-
-  const handleAuthorChange = (e) => {
-    setAuthor(e.target.value);
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setAuthor(user.username);
+    }
   };
 
   const handleUrlChange = (e) => {
     setUrl(e.target.value);
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setAuthor(user.username);
+    }
   };
 
   const addBlog = (e) => {
@@ -37,19 +43,21 @@ const BlogForm = ({ createBlog }) => {
       <form onSubmit={addBlog}>
         title:
         <input
+          id="title"
           aria-label="title:"
           value={newTitle}
           onChange={handleTitleChange}
         />
-        author:
-        <input
-          aria-label="author:"
-          value={newAuthor}
-          onChange={handleAuthorChange}
-        />
         url:
-        <input aria-label="url:" value={newUrl} onChange={handleUrlChange} />
-        <button type="submit">create</button>
+        <input
+          id="url"
+          aria-label="url:"
+          value={newUrl}
+          onChange={handleUrlChange}
+        />
+        <button id="create-blog" type="submit">
+          create
+        </button>
       </form>
     </div>
   );
