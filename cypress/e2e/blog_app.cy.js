@@ -6,7 +6,13 @@ describe("Blog app", function () {
       username: "filip",
       password: "1111",
     };
+    const user2 = {
+      name: "arina",
+      username: "arina",
+      password: "0000",
+    };
     cy.request("POST", "http://localhost:3003/api/users/", user);
+    cy.request("POST", "http://localhost:3003/api/users/", user2);
     cy.visit("http://localhost:5173");
   });
 
@@ -43,7 +49,6 @@ describe("Blog app", function () {
     it("A blog can be created", function () {
       cy.contains("new blog").click();
       cy.get("#title").type("NEW BLOG TO TEST");
-      cy.get("#author").type("filip");
       cy.get("#url").type("no-url");
       cy.get("#create-blog").click();
 
@@ -53,7 +58,6 @@ describe("Blog app", function () {
     it("confirms users can like a blog", function () {
       cy.contains("new blog").click();
       cy.get("#title").type("NEW BLOG TO TEST");
-      cy.get("#author").type("filip");
       cy.get("#url").type("no-url");
       cy.get("#create-blog").click();
 
@@ -67,7 +71,6 @@ describe("Blog app", function () {
     it("the user who created a blog can delete it", function () {
       cy.contains("new blog").click();
       cy.get("#title").type("NEW BLOG TO TEST");
-      cy.get("#author").type("filip");
       cy.get("#url").type("no-url");
       cy.get("#create-blog").click();
 
@@ -75,6 +78,23 @@ describe("Blog app", function () {
       cy.contains("view").click();
       cy.contains("remove").click();
       cy.on("window:confirm", () => true);
+    });
+
+    it("test for ensuring that only the creator can see the delete button of a blog, not anyone else", function () {
+      cy.contains("new blog").click();
+      cy.get("#title").type("NEW BLOG TO TEST");
+      cy.get("#url").type("no-url");
+      cy.get("#create-blog").click();
+
+      cy.contains("NEW BLOG TO TEST");
+      cy.contains("logout").click();
+
+      cy.get("#username").type("arina");
+      cy.get("#password").type("0000");
+      cy.get("#login-button").click();
+      cy.login({ username: "arina", password: "0000" });
+      cy.contains("view").click();
+      cy.get("#remove-btn").should("not.exist");
     });
   });
 });

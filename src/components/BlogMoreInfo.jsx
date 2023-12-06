@@ -7,7 +7,9 @@ const BlogMoreInfo = ({ blog, handleLikeBlog, handleRemoveBlog, user }) => {
       <p>{blog.url}</p>
       {`Likes: ${blog.likes}`} <button onClick={handleLikeBlog}>like</button>
       {user.username === blog.author && (
-        <button onClick={handleRemoveBlog}>remove</button>
+        <button id="remove-btn" onClick={handleRemoveBlog}>
+          remove
+        </button>
       )}
     </div>
   );
