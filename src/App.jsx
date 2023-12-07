@@ -193,7 +193,7 @@ const App = () => {
           <button onClick={handleLogout}>logout</button>
           {blogForm()}
           {blogs.map((blog) => (
-            <div key={blog.id} style={blogStyle}>
+            <div className="blog-info" key={blog.id} style={blogStyle}>
               <Blog blog={blog} />
               <Togglable buttonLabel="view" ref={blogRef}>
                 <BlogMoreInfo

@@ -96,5 +96,26 @@ describe("Blog app", function () {
       cy.contains("view").click();
       cy.get("#remove-btn").should("not.exist");
     });
+
+    it("checks that the blogs are ordered according to likes with the blog with the most likes being first", function () {
+      cy.contains("new blog").click();
+      cy.get("#title").type("The title with the most likes");
+      cy.get("#url").type("no-url");
+      cy.get("#create-blog").click();
+
+      cy.contains("new blog").click();
+      cy.get("#title").type("The title with the second most likes");
+      cy.get("#url").type("no-url");
+      cy.get("#create-blog").click();
+
+      cy.contains("The title with the most likes");
+      cy.contains("view").click();
+      cy.get(".blog-info")
+        .eq(0)
+        .should("contain", "The title with the most likes");
+      cy.get(".blog-info")
+        .eq(1)
+        .should("contain", "The title with the second most likes");
+    });
   });
 });
